@@ -1,11 +1,30 @@
 ---
 - name: INSTALL | Timeshift
-  tags:
-    - install
   block:
     - name: INSTALL | Install Timeshift from apt repository
       become: true
       ansible.builtin.apt:
         name: timeshift
         state: latest
+      when: ansible_facts['pkg_mgr'] == "apt"
+  tags: install
+
+- name: CONFIGURE | Timeshift
+  block:
+    - name: CONFIGURE | Do First Run
+      ansible.builtin.lineinfile:
+        path: /etc/timeshift.json
+        regexp: '  "do_first_run"'
+        line: '  "do_first_run" : "{{ do_first_run }}",'
+  tags: configure
+
+- name: REMOVE | Timeshift
+  block:
+    - name: REMOVE | Remove timeshift from apt repository
+      become: true
+      ansible.builtin.apt:
+        name: timeshift
+        state: absent
+      when: ansible_facts['pkg_mgr'] == "apt"
+  tags: remove
 

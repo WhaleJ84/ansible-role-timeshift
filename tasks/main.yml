@@ -3,9 +3,9 @@
   tags:
     - install
   block:
-    - name INSTALL | Install Timeshift from apt repository
-  become: true
-  ansible.builtin.apt:
-    name: timeshift
-    state: latest
+    - name: INSTALL | Install Timeshift from apt repository
+      become: true
+      ansible.builtin.apt:
+        name: timeshift
+        state: latest
 

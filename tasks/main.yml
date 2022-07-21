@@ -27,5 +27,5 @@
         name: timeshift
         state: absent
       when: ansible_facts['pkg_mgr'] == "apt"
-  tags: remove
+  tags: [remove, never]
 

@@ -12,6 +12,7 @@
 - name: CONFIGURE | Timeshift
   block:
     - name: CONFIGURE | Do First Run
+      become: true
       ansible.builtin.lineinfile:
         path: /etc/timeshift.json
         regexp: '  "do_first_run"'

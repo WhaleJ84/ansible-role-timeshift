@@ -23,3 +23,5 @@ snapshot_count: "0"
 date_format: "%Y-%m-%d %H:%M:%S"
 exclude: []
 exclude_apps: []
+backup_device_uuid: ""
+parent_device_uuid: ""

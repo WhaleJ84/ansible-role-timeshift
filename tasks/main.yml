@@ -1,11 +1,27 @@
 ---
 - name: INSTALL | Timeshift
   block:
-    - name: INSTALL | Install Timeshift from apt repository
-      become: true
-      ansible.builtin.apt:
-        name: timeshift
-        state: present
+    - name: INSTALL | Apt dependent installs
+      block:
+      - name: INSTALL | Install Timeshift from apt repository
+        become: true
+        ansible.builtin.apt:
+          name: timeshift
+          state: present
+
+      - name: INSTALL | timeshift-autosnap-apt tasks
+        block:
+        - name: INSTALL | Clone timeshift-autosnap-apt repository
+          ansible.builtin.git:
+            repo: 'https://github.com/wmutschl/timeshift-autosnap-apt.git'
+            dest: "{{ ansible_env.HOME }}/opt/timeshift-autosnap-apt"
+
+        - name: INSTALL | Install timeshift-autosnap-apt
+          community.general.make:
+            chdir: "{{ ansible_env.HOME }}/opt/timeshift-autosnap-apt"
+            target: install
+          become: true
+        when: "'/usr/bin/timeshift-autosnap-apt' is not file"
       when: ansible_facts['pkg_mgr'] == "apt"
   tags: install
 

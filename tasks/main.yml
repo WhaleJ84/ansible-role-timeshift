@@ -32,7 +32,7 @@
         #            line: '  "parent_device_uuid" : "{{ parent_device_uuid }}",'
         #          when: timeshift_config['parent_device_uuid'] != parent_device_uuid
 
-        - name: CONFIGURE | Do First Run
+        - name: CONFIGURE | do_first_run
           ansible.builtin.lineinfile:
             path: "{{ timeshift_json }}"
             regexp: 'do_first_run'

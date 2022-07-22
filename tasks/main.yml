@@ -19,7 +19,7 @@
     - name: CONFIGURE | Do First Run
       ansible.builtin.set_fact:
         timeshift_config: "{{ timeshift_config | default([]) | combine({ 'do_first_run': '{{ do_first_run }}' }) }}"
-      when: timeshift_config['do_first_run'] != {{ do_first_run }}
+      when: timeshift_config['do_first_run'] != do_first_run
   tags: configure
 
 - name: REMOVE | Timeshift

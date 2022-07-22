@@ -11,12 +11,15 @@
 
 - name: CONFIGURE | Timeshift
   block:
+    - name: CONFIGURE | Load content from /etc/timeshift.json
+      ansible.builtin.include_vars:
+        file: /etc/timeshift.json
+        name: timeshift_config
+
     - name: CONFIGURE | Do First Run
-      become: true
-      ansible.builtin.lineinfile:
-        path: /etc/timeshift.json
-        regexp: '  "do_first_run"'
-        line: '  "do_first_run" : "{{ do_first_run }}",'
+      ansible.builtin.set_fact:
+        timeshift_config: "{{ timeshift_config | default([]) | combine({ 'do_first_run': '{{ do_first_run }}' }) }}"
+      when: timeshift_config['do_first_run'] != {{ do_first_run }}
   tags: configure
 
 - name: REMOVE | Timeshift

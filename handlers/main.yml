@@ -1,0 +1,6 @@
+---
+- name: Update Timeshift Settings
+  ansible.builtin.copy:
+    content: "{{ timeshift_config | to_nice_json }}"
+    dest: /etc/timeshift.json
+  become: true

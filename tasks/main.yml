@@ -15,170 +15,136 @@
         file: /etc/timeshift.json
         name: timeshift_config
 
-    - name: CONFIGURE | Individual Settings
-      block:
-        #        - name: CONFIGURE | backup_device_uuid
-        #          ansible.builtin.lineinfile:
-        #            path: "{{ timeshift_json }}"
-        #            regexp: 'backup_device_uuid'
-        #            line: '  "backup_device_uuid" : "{{ backup_device_uuid }}",'
-        #          when: timeshift_config['backup_device_uuid'] != backup_device_uuid
+    - name: CONFIGURE | do_first_run
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'do_first_run'
+        line: '  "do_first_run" : "{{ do_first_run }}",'
+      when: timeshift_config['do_first_run'] != do_first_run
 
-        #        - name: CONFIGURE | parent_device_uuid
-        #          ansible.builtin.lineinfile:
-        #            path: "{{ timeshift_json }}"
-        #            regexp: 'parent_device_uuid'
-        #            line: '  "parent_device_uuid" : "{{ parent_device_uuid }}",'
-        #          when: timeshift_config['parent_device_uuid'] != parent_device_uuid
+    - name: CONFIGURE | Determine root filesystem type
+      ansible.builtin.set_fact:
+        root_fstype: "{{ item.fstype }}"
+      loop: "{{ ansible_facts.mounts }}"
+      when: item.mount == "/"
 
-        - name: CONFIGURE | do_first_run
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'do_first_run'
-            line: '  "do_first_run" : "{{ do_first_run }}",'
-          when: timeshift_config['do_first_run'] != do_first_run
+    - name: CONFIGURE | Overwrite btrfs_mode variable based on filesystem type
+      ansible.builtin.set_fact:
+        btrfs_mode: true
+      when: root_fstype == "btrfs"
 
-        - name: CONFIGURE | btrfs_mode
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'btrfs_mode'
-            line: '  "btrfs_mode" : "{{ btrfs_mode }}",'
-          when: timeshift_config['btrfs_mode'] != btrfs_mode
+    - name: CONFIGURE | btrfs_mode
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'btrfs_mode'
+        line: '  "btrfs_mode" : "{{ btrfs_mode }}",'
+      when: timeshift_config['btrfs_mode'] != btrfs_mode
 
-        - name: CONFIGURE | include_btrfs_home_for_backup
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'include_btrfs_home_for_backup'
-            line: '  "include_btrfs_home_for_backup" : "{{ include_btrfs_home_for_backup }}",'
-          when: timeshift_config['include_btrfs_home_for_backup'] != include_btrfs_home_for_backup
+    - name: CONFIGURE | include_btrfs_home_for_backup
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'include_btrfs_home_for_backup'
+        line: '  "include_btrfs_home_for_backup" : "{{ include_btrfs_home_for_backup }}",'
+      when: timeshift_config['include_btrfs_home_for_backup'] != include_btrfs_home_for_backup
 
-        - name: CONFIGURE | include_btrfs_home_for_restore
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'include_btrfs_home_for_restore'
-            line: '  "include_btrfs_home_for_restore" : "{{ include_btrfs_home_for_restore }}",'
-          when: timeshift_config['include_btrfs_home_for_restore'] != include_btrfs_home_for_restore
+    - name: CONFIGURE | include_btrfs_home_for_restore
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'include_btrfs_home_for_restore'
+        line: '  "include_btrfs_home_for_restore" : "{{ include_btrfs_home_for_restore }}",'
+      when: timeshift_config['include_btrfs_home_for_restore'] != include_btrfs_home_for_restore
 
-        - name: CONFIGURE | stop_cron_emails
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'stop_cron_emails'
-            line: '  "stop_cron_emails" : "{{ stop_cron_emails }}",'
-          when: timeshift_config['stop_cron_emails'] != stop_cron_emails
+    - name: CONFIGURE | stop_cron_emails
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'stop_cron_emails'
+        line: '  "stop_cron_emails" : "{{ stop_cron_emails }}",'
+      when: timeshift_config['stop_cron_emails'] != stop_cron_emails
 
-        - name: CONFIGURE | btrfs_use_qgroup
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'btrfs_use_qgroup'
-            line: '  "btrfs_use_qgroup" : "{{ btrfs_use_qgroup }}",'
-          when: timeshift_config['btrfs_use_qgroup'] != btrfs_use_qgroup
+    - name: CONFIGURE | btrfs_use_qgroup
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'btrfs_use_qgroup'
+        line: '  "btrfs_use_qgroup" : "{{ btrfs_use_qgroup }}",'
+      when: timeshift_config['btrfs_use_qgroup'] != btrfs_use_qgroup
 
-        - name: CONFIGURE | schedule_monthly
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'schedule_monthly'
-            line: '  "schedule_monthly" : "{{ schedule_monthly }}",'
-          when: timeshift_config['schedule_monthly'] != schedule_monthly
+    - name: CONFIGURE | schedule_monthly
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'schedule_monthly'
+        line: '  "schedule_monthly" : "{{ schedule_monthly }}",'
+      when: timeshift_config['schedule_monthly'] != schedule_monthly
 
-        - name: CONFIGURE | schedule_weekly
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'schedule_weekly'
-            line: '  "schedule_weekly" : "{{ schedule_weekly }}",'
-          when: timeshift_config['schedule_weekly'] != schedule_weekly
+    - name: CONFIGURE | schedule_weekly
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'schedule_weekly'
+        line: '  "schedule_weekly" : "{{ schedule_weekly }}",'
+      when: timeshift_config['schedule_weekly'] != schedule_weekly
 
-        - name: CONFIGURE | schedule_daily
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'schedule_daily'
-            line: '  "schedule_daily" : "{{ schedule_daily }}",'
-          when: timeshift_config['schedule_daily'] != schedule_daily
+    - name: CONFIGURE | schedule_daily
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'schedule_daily'
+        line: '  "schedule_daily" : "{{ schedule_daily }}",'
+      when: timeshift_config['schedule_daily'] != schedule_daily
 
-        - name: CONFIGURE | schedule_hourly
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'schedule_hourly'
-            line: '  "schedule_hourly" : "{{ schedule_hourly }}",'
-          when: timeshift_config['schedule_hourly'] != schedule_hourly
+    - name: CONFIGURE | schedule_hourly
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'schedule_hourly'
+        line: '  "schedule_hourly" : "{{ schedule_hourly }}",'
+      when: timeshift_config['schedule_hourly'] != schedule_hourly
 
-        - name: CONFIGURE | schedule_boot
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'schedule_boot'
-            line: '  "schedule_boot" : "{{ schedule_boot }}",'
-          when: timeshift_config['schedule_boot'] != schedule_boot
+    - name: CONFIGURE | schedule_boot
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'schedule_boot'
+        line: '  "schedule_boot" : "{{ schedule_boot }}",'
+      when: timeshift_config['schedule_boot'] != schedule_boot
 
-        - name: CONFIGURE | count_monthly
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'count_monthly'
-            line: '  "count_monthly" : "{{ count_monthly }}",'
-          when: timeshift_config['count_monthly'] != count_monthly
+    - name: CONFIGURE | count_monthly
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'count_monthly'
+        line: '  "count_monthly" : "{{ count_monthly }}",'
+      when: timeshift_config['count_monthly'] != count_monthly
 
-        - name: CONFIGURE | count_weekly
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'count_weekly'
-            line: '  "count_weekly" : "{{ count_weekly }}",'
-          when: timeshift_config['count_weekly'] != count_weekly
+    - name: CONFIGURE | count_weekly
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'count_weekly'
+        line: '  "count_weekly" : "{{ count_weekly }}",'
+      when: timeshift_config['count_weekly'] != count_weekly
 
-        - name: CONFIGURE | count_daily
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'count_daily'
-            line: '  "count_daily" : "{{ count_daily }}",'
-          when: timeshift_config['count_daily'] != count_daily
+    - name: CONFIGURE | count_daily
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'count_daily'
+        line: '  "count_daily" : "{{ count_daily }}",'
+      when: timeshift_config['count_daily'] != count_daily
 
-        - name: CONFIGURE | count_hourly
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'count_hourly'
-            line: '  "count_hourly" : "{{ count_hourly }}",'
-          when: timeshift_config['count_hourly'] != count_hourly
+    - name: CONFIGURE | count_hourly
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'count_hourly'
+        line: '  "count_hourly" : "{{ count_hourly }}",'
+      when: timeshift_config['count_hourly'] != count_hourly
 
-        - name: CONFIGURE | count_boot
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'count_boot'
-            line: '  "count_boot" : "{{ count_boot }}",'
-          when: timeshift_config['count_boot'] != count_boot
+    - name: CONFIGURE | count_boot
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'count_boot'
+        line: '  "count_boot" : "{{ count_boot }}",'
+      when: timeshift_config['count_boot'] != count_boot
 
-          #        - name: CONFIGURE | snapshot_size
-          #          ansible.builtin.lineinfile:
-          #            path: "{{ timeshift_json }}"
-          #            regexp: 'snapshot_size'
-          #            line: '  "snapshot_size" : "{{ snapshot_size }}",'
-          #          when: timeshift_config['snapshot_size'] != snapshot_size
-
-          #        - name: CONFIGURE | snapshot_count
-          #          ansible.builtin.lineinfile:
-          #            path: "{{ timeshift_json }}"
-          #            regexp: 'snapshot_count'
-          #            line: '  "snapshot_count" : "{{ snapshot_count }}",'
-          #          when: timeshift_config['snapshot_count'] != snapshot_count
-
-        - name: CONFIGURE | date_format
-          ansible.builtin.lineinfile:
-            path: "{{ timeshift_json }}"
-            regexp: 'date_format'
-            line: '  "date_format" : "{{ date_format }}",'
-          when: timeshift_config['date_format'] != date_format
-
-          #        - name: CONFIGURE | exclude
-          #          ansible.builtin.lineinfile:
-          #            path: "{{ timeshift_json }}"
-          #            regexp: '"exclude"'
-          #            line: '  "exclude" : "{{ exclude }}",'
-          #          when: timeshift_config['exclude'] != exclude
-
-          #        - name: CONFIGURE | exclude-apps
-          #          ansible.builtin.lineinfile:
-          #            path: "{{ timeshift_json }}"
-          #            regexp: '"exclude-apps"'
-          #            line: '  "exclude-apps" : "{{ exclude_apps }}"'
-          #          when: timeshift_config['exclude-apps'] != exclude_apps
-
-      become: true
+    - name: CONFIGURE | date_format
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'date_format'
+        line: '  "date_format" : "{{ date_format }}",'
+      when: timeshift_config['date_format'] != date_format
+  become: true
   tags: configure
 
 - name: REMOVE | Timeshift
@@ -190,3 +156,45 @@
         state: absent
       when: ansible_facts['pkg_mgr'] == "apt"
   tags: [remove, never]
+
+  #        - name: CONFIGURE | backup_device_uuid
+  #          ansible.builtin.lineinfile:
+  #            path: "{{ timeshift_json }}"
+  #            regexp: 'backup_device_uuid'
+  #            line: '  "backup_device_uuid" : "{{ backup_device_uuid }}",'
+  #          when: timeshift_config['backup_device_uuid'] != backup_device_uuid
+
+  #        - name: CONFIGURE | parent_device_uuid
+  #          ansible.builtin.lineinfile:
+  #            path: "{{ timeshift_json }}"
+  #            regexp: 'parent_device_uuid'
+  #            line: '  "parent_device_uuid" : "{{ parent_device_uuid }}",'
+  #          when: timeshift_config['parent_device_uuid'] != parent_device_uuid
+
+  #        - name: CONFIGURE | snapshot_size
+  #          ansible.builtin.lineinfile:
+  #            path: "{{ timeshift_json }}"
+  #            regexp: 'snapshot_size'
+  #            line: '  "snapshot_size" : "{{ snapshot_size }}",'
+  #          when: timeshift_config['snapshot_size'] != snapshot_size
+
+  #        - name: CONFIGURE | snapshot_count
+  #          ansible.builtin.lineinfile:
+  #            path: "{{ timeshift_json }}"
+  #            regexp: 'snapshot_count'
+  #            line: '  "snapshot_count" : "{{ snapshot_count }}",'
+  #          when: timeshift_config['snapshot_count'] != snapshot_count
+
+  #        - name: CONFIGURE | exclude
+  #          ansible.builtin.lineinfile:
+  #            path: "{{ timeshift_json }}"
+  #            regexp: '"exclude"'
+  #            line: '  "exclude" : "{{ exclude }}",'
+  #          when: timeshift_config['exclude'] != exclude
+
+  #        - name: CONFIGURE | exclude-apps
+  #          ansible.builtin.lineinfile:
+  #            path: "{{ timeshift_json }}"
+  #            regexp: '"exclude-apps"'
+  #            line: '  "exclude-apps" : "{{ exclude_apps }}"'
+  #          when: timeshift_config['exclude-apps'] != exclude_apps

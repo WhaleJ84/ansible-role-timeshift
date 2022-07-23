@@ -15,6 +15,27 @@
         file: /etc/timeshift.json
         name: timeshift_config
 
+    - name: CONFIGURE | Determine backup_device_uuid from location_mount
+      ansible.builtin.set_fact:
+        backup_device_uuid: "{{ item.uuid }}"
+      loop: "{{ ansible_facts.mounts }}"
+      when: item.mount == "{{ location_mount }}"
+
+    - name: CONFIGURE | backup_device_uuid
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'backup_device_uuid'
+        line: '  "backup_device_uuid" : "{{ backup_device_uuid }}",'
+      when: timeshift_config['backup_device_uuid'] != backup_device_uuid
+
+    # NOTE: Program works without this value
+    - name: CONFIGURE | parent_device_uuid
+      ansible.builtin.lineinfile:
+        path: "{{ timeshift_json }}"
+        regexp: 'parent_device_uuid'
+        line: '  "parent_device_uuid" : "{{ parent_device_uuid }}",'
+      when: timeshift_config['parent_device_uuid'] != parent_device_uuid
+
     - name: CONFIGURE | do_first_run
       ansible.builtin.lineinfile:
         path: "{{ timeshift_json }}"
@@ -156,20 +177,6 @@
         state: absent
       when: ansible_facts['pkg_mgr'] == "apt"
   tags: [remove, never]
-
-  #        - name: CONFIGURE | backup_device_uuid
-  #          ansible.builtin.lineinfile:
-  #            path: "{{ timeshift_json }}"
-  #            regexp: 'backup_device_uuid'
-  #            line: '  "backup_device_uuid" : "{{ backup_device_uuid }}",'
-  #          when: timeshift_config['backup_device_uuid'] != backup_device_uuid
-
-  #        - name: CONFIGURE | parent_device_uuid
-  #          ansible.builtin.lineinfile:
-  #            path: "{{ timeshift_json }}"
-  #            regexp: 'parent_device_uuid'
-  #            line: '  "parent_device_uuid" : "{{ parent_device_uuid }}",'
-  #          when: timeshift_config['parent_device_uuid'] != parent_device_uuid
 
   #        - name: CONFIGURE | snapshot_size
   #          ansible.builtin.lineinfile:

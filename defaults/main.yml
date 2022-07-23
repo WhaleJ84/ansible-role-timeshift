@@ -2,6 +2,7 @@
 # Some vars here are not specified in the [source](https://github.com/linuxmint/timeshift/blob/master/files/timeshift.json)
 # and instead generated upon installation. Included for completeness-sake.
 timeshift_json: "/etc/timeshift.json"
+location_mount: ""
 do_first_run: "true"
 btrfs_mode: "false"
 include_btrfs_home: "false"

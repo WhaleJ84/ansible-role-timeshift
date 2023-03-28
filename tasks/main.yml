@@ -49,17 +49,12 @@
       loop: "{{ ansible_facts.mounts }}"
       when: item.mount == "/"
 
-    - name: CONFIGURE | Overwrite btrfs_mode variable based on filesystem type
-      ansible.builtin.set_fact:
-        btrfs_mode: "true"
-      when: root_fstype == "btrfs"
-
     - name: CONFIGURE | btrfs_mode
       ansible.builtin.lineinfile:
         path: "{{ timeshift_json }}"
         regexp: 'btrfs_mode'
-        line: '  "btrfs_mode" : "{{ btrfs_mode }}",'
-      when: timeshift_config['btrfs_mode'] != btrfs_mode
+        line: '  "btrfs_mode" : "true",'
+      when: root_fstype == "btrfs"
 
     - name: CONFIGURE | include_btrfs_home_for_backup
       ansible.builtin.lineinfile:

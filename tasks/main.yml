@@ -12,7 +12,7 @@
   block:
     - name: CONFIGURE | Load content from /etc/timeshift.json
       ansible.builtin.include_vars:
-        file: /etc/timeshift.json
+        file: "{{ timeshift_json }}"
         name: timeshift_config
 
     - name: CONFIGURE | Determine backup_device_uuid from location_mount
@@ -167,6 +167,12 @@
       when: timeshift_config['date_format'] != date_format
   become: true
   tags: configure
+
+- name: SNAPSHOT | Create Timeshift snapshot
+  ansible.builtin.command:
+    cmd: timeshift --create --comments "{{ snapshot_name }}"
+  become: true
+  tags: [snapshot, never]
 
 - name: REMOVE | Timeshift
   block:

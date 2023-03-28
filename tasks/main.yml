@@ -51,7 +51,7 @@
 
     - name: CONFIGURE | Overwrite btrfs_mode variable based on filesystem type
       ansible.builtin.set_fact:
-        btrfs_mode: true
+        btrfs_mode: "true"
       when: root_fstype == "btrfs"
 
     - name: CONFIGURE | btrfs_mode

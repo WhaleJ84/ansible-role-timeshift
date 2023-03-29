@@ -162,12 +162,19 @@
         line: '  "date_format" : "{{ date_format }}",'
       when: timeshift_config['date_format'] != date_format
 
-    - name: CONFIGURE | add timeshift-launcher to sudoers
-      community.general.sudoers:
-        name: timeshift
-        user: "{{ user }}"
-        commands: /usr/bin/timeshift-launcher
-      when: (user is defined) and (remove_gui_password_prompt | bool)
+    block:
+      - name: CONFIGURE | add timeshift-launcher to sudoers
+        community.general.sudoers:
+          name: timeshift
+          user: "{{ user }}"
+          commands: /usr/bin/timeshift-launcher
+
+      - name: CONFIGURE | ensure sudo is appended to desktop command
+        ansible.builtin.lineinfile:
+          path: "{{ timeshift_desktop }}"
+          regexp: 'Exec'
+          line: 'Exec=sudo timeshift-launcher'
+    when: (user is defined) and (remove_gui_password_prompt | bool)
   become: true
   tags: configure
 

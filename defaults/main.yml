@@ -3,6 +3,7 @@
 # and instead generated upon installation. Included for completeness-sake.
 snapshot_name: "Undefined snapshot"
 remove_gui_password_prompt: "false"
+timeshift_desktop: "/usr/share/applications/timeshift-gtk.desktop"
 timeshift_json: "/etc/timeshift/timeshift.json"
 location_mount: ""
 do_first_run: "true"

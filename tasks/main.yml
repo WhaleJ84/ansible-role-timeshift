@@ -28,13 +28,14 @@
         line: '  "backup_device_uuid" : "{{ backup_device_uuid }}",'
       when: timeshift_config['backup_device_uuid'] != backup_device_uuid
 
-    # NOTE: Program works without this value
+    # Timeshift will automatically grab parent UUID from backup device
     - name: CONFIGURE | parent_device_uuid
       ansible.builtin.lineinfile:
         path: "{{ timeshift_json }}"
         regexp: 'parent_device_uuid'
         line: '  "parent_device_uuid" : "{{ parent_device_uuid }}",'
-      when: timeshift_config['parent_device_uuid'] != parent_device_uuid
+      when: parent_device_uuid != ""
+          #when: timeshift_config['parent_device_uuid'] != parent_device_uuid
 
     - name: CONFIGURE | do_first_run
       ansible.builtin.lineinfile:

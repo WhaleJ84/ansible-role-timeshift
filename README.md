@@ -33,6 +33,7 @@ Example Playbook
 This example playbook shows how I would use this role, with custom variables to suit my needs.
 
 ```yaml
+---
 - hosts: localhost
 
   roles:

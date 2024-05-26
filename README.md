@@ -4,7 +4,7 @@ Timeshift
 Installs and configures [timeshift](https://github.com/linuxmint/timeshift) for the user.
 
 Requirements
------------------
+------------
 
 This role has no requirements.
 To include this role in your `requirements.yml` file, add the following list item:

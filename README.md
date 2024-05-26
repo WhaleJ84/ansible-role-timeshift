@@ -4,9 +4,18 @@ Timeshift
 Installs and configures [timeshift](https://github.com/linuxmint/timeshift) for the user.
 
 Requirements
-------------
+-----------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role has no requirements.
+To include this role in your `requirements.yml` file, add the following list item:
+
+```yaml
+---
+roles:
+  - name: whalej84.timeshift
+    src: https://github.com/WhaleJ84/ansible-role-timeshift.git
+    scm: git
+```
 
 Role Variables
 --------------

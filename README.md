@@ -21,7 +21,22 @@ A list of other roles hosted on Galaxy should go here, plus any details in regar
 Example Playbook
 ----------------
 
-    - hosts: localhost
-      roles:
-         - { role: whalej84.timeshift }
+This example playbook shows how I would use this role, with custom variables to suit my needs.
 
+```yaml
+- hosts: localhost
+
+  roles:
+    - role: whalej84.timeshift
+      vars:
+        remove_gui_password_prompt: "true"
+        location_mount: "/"
+        do_first_run: "false"
+        schedule_monthly: "true"
+        schedule_weekly: "true"
+        schedule_daily: "true"
+        schedule_boot: "true"
+        include_btrfs_home_for_backup: "true"
+        include_btrfs_home_for_restore: "true"
+      tags: [ timeshift ]
+```
